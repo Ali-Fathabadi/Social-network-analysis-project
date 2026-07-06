@@ -4,7 +4,7 @@ A graph-based social network analysis system developed for the Data Structures c
 
 The application is capable of analyzing relationships between users, finding shortest paths, detecting connected groups, suggesting friends, and generating network statistics using efficient data structures and graph algorithms.
 
-##Features
+## Features
 
 - User and friendship management
 - List friends of a user
@@ -19,7 +19,7 @@ The application is capable of analyzing relationships between users, finding sho
 - JSON-based data storage and retrieval
 - Graphical User Interface (GUI)
 
-##Algorithms & Data Structures
+## Algorithms & Data Structures
 
 This project focuses on implementing optimized graph algorithms without using external graph-processing libraries or databases. Key concepts include:
 
@@ -31,12 +31,12 @@ This project focuses on implementing optimized graph algorithms without using ex
 - Adjacency Lists
 - Time & Space Complexity Optimization
 
-##Technologies
+## Technologies
 
 - Language: C++ / Python
 - GUI-based application (Desktop or Web)
 - JSON for data persistence
 
-##Project Goals
+## Project Goals
 
 The main goal of this project is to design an efficient and scalable social network analyzer while minimizing algorithmic complexity and applying data structure concepts in a real-world scenario.
