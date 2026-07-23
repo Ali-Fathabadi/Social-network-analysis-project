@@ -2,6 +2,6 @@
 #include <string>
 
 struct User {
-    int id = -1;
+    std::string id;
     std::string name;
 };
