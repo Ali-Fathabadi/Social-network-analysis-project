@@ -1,4 +1,4 @@
- # Social-network-analysis-project
+# Social-network-analysis-project
 
 A graph-based social network analysis system developed for the Data Structures course. This project simulates a social media network where users are represented as nodes and friendships are represented as edges in a graph structure.
 
