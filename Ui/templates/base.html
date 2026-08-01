@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Data Structure Project{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>Data Structure Project</h1>
+            <p>Social graph interface</p>
+        </div>
+        <nav>
+            <a href="/" class="{% if active == 'dashboard' %}active{% endif %}">Dashboard</a>
+            <a href="/users" class="{% if active == 'users' %}active{% endif %}">Users</a>
+            <a href="/paths" class="{% if active == 'paths' %}active{% endif %}">Paths</a>
+            <a href="/distances" class="{% if active == 'distances' %}active{% endif %}">Distances</a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <div id="toast" class="toast"></div>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

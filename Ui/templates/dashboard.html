@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% set active = "dashboard" %}
+{% block title %}Dashboard | Data Structure Project{% endblock %}
+{% block content %}
+<header class="page-header">
+    <h2>Dashboard</h2>
+    <p>Overview layout for the social graph project.</p>
+</header>
+
+<section class="grid">
+    <article class="card"><div class="label">Total users</div><div class="value">—</div></article>
+    <article class="card"><div class="label">Friendships</div><div class="value">—</div></article>
+    <article class="card"><div class="label">Average friends</div><div class="value">—</div></article>
+    <article class="card"><div class="label">Largest group</div><div class="value">—</div></article>
+</section>
+
+<section class="panel">
+    <h3>Interface progress</h3>
+    <div class="placeholder-list">
+        <span class="tag">User search</span>
+        <span class="tag">Friend lists</span>
+        <span class="tag">Mutual friends</span>
+        <span class="tag">Path analysis</span>
+        <span class="tag">Distance table</span>
+    </div>
+</section>
+{% endblock %}

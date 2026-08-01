@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% set active = "users" %}
+{% block title %}Users | Data Structure Project{% endblock %}
+{% block content %}
+<header class="page-header">
+    <h2>User analysis</h2>
+    <p>Search for a user and display friends, profile details, and suggestions.</p>
+</header>
+
+<section class="panel">
+    <h3>Find user</h3>
+    <form id="user-search-form" class="form-row">
+        <div class="field">
+            <label for="user-id">User ID</label>
+            <input id="user-id" name="user-id" placeholder="Example: A1" autocomplete="off">
+        </div>
+        <button class="button" type="submit">Search</button>
+    </form>
+    <div id="user-search-result" class="result"></div>
+</section>
+
+<section class="grid">
+    <article class="panel">
+        <h3>User details</h3>
+        <div class="empty-state">User information will appear here.</div>
+    </article>
+    <article class="panel">
+        <h3>Friend suggestions</h3>
+        <div class="empty-state">Suggested users will appear here.</div>
+    </article>
+</section>
+
+<section class="panel">
+    <h3>Mutual friends</h3>
+    <form id="mutual-form" class="form-row">
+        <div class="field">
+            <label for="mutual-user-one">First user ID</label>
+            <input id="mutual-user-one" placeholder="Example: A">
+        </div>
+        <div class="field">
+            <label for="mutual-user-two">Second user ID</label>
+            <input id="mutual-user-two" placeholder="Example: B">
+        </div>
+        <button class="button secondary" type="submit">Compare</button>
+    </form>
+    <div id="mutual-result" class="result"></div>
+</section>
+{% endblock %}

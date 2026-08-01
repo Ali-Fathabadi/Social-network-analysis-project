@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% set active = "distances" %}
+{% block title %}Distances | Data Structure Project{% endblock %}
+{% block content %}
+<header class="page-header">
+    <h2>Distance analysis</h2>
+    <p>Display the distance from one user to every other user.</p>
+</header>
+
+<section class="panel">
+    <form id="distance-form" class="form-row">
+        <div class="field">
+            <label for="distance-user-id">User ID</label>
+            <input id="distance-user-id" placeholder="Example: A">
+        </div>
+        <button class="button" type="submit">Calculate</button>
+    </form>
+    <div id="distance-result" class="result"></div>
+</section>
+
+<section class="panel">
+    <h3>Distance results</h3>
+    <table>
+        <thead>
+            <tr><th>User</th><th>Distance</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+            <tr><td colspan="3" class="empty-state">No result has been loaded.</td></tr>
+        </tbody>
+    </table>
+</section>
+{% endblock %}
