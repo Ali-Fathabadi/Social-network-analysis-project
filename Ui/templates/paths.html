@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% set active = "paths" %}
+{% block title %}Paths | Data Structure Project{% endblock %}
+{% block content %}
+<header class="page-header">
+    <h2>Path analysis</h2>
+    <p>Interface for connection checks and shortest-path results.</p>
+</header>
+
+<section class="panel">
+    <h3>Select two users</h3>
+    <form id="path-form" class="form-row">
+        <div class="field">
+            <label for="source-id">Source ID</label>
+            <input id="source-id" placeholder="Example: A">
+        </div>
+        <div class="field">
+            <label for="target-id">Target ID</label>
+            <input id="target-id" placeholder="Example: B1">
+        </div>
+        <button class="button" type="submit">Find path</button>
+    </form>
+    <div id="path-result" class="result"></div>
+</section>
+
+<section class="panel">
+    <h3>Shortest path</h3>
+    <div class="path-preview">
+        <span class="path-node">Source</span>
+        <span>→</span>
+        <span class="path-node">Intermediate</span>
+        <span>→</span>
+        <span class="path-node">Target</span>
+    </div>
+</section>
+
+<section class="grid">
+    <article class="card"><div class="label">Direct friendship</div><div class="value">—</div></article>
+    <article class="card"><div class="label">Connected</div><div class="value">—</div></article>
+    <article class="card"><div class="label">Distance</div><div class="value">—</div></article>
+</section>
+{% endblock %}
