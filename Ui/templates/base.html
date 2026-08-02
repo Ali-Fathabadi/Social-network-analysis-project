@@ -12,11 +12,13 @@
             <h1>Data Structure Project</h1>
             <p>Social graph interface</p>
         </div>
-        <nav>
+        <nav aria-label="Main navigation">
             <a href="/" class="{% if active == 'dashboard' %}active{% endif %}">Dashboard</a>
             <a href="/users" class="{% if active == 'users' %}active{% endif %}">Users</a>
             <a href="/paths" class="{% if active == 'paths' %}active{% endif %}">Paths</a>
             <a href="/distances" class="{% if active == 'distances' %}active{% endif %}">Distances</a>
+            <a href="/management" class="{% if active == 'management' %}active{% endif %}">Management</a>
+            <a href="/groups" class="{% if active == 'groups' %}active{% endif %}">Groups</a>
         </nav>
     </aside>
 
@@ -24,7 +26,7 @@
         {% block content %}{% endblock %}
     </main>
 
-    <div id="toast" class="toast"></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>

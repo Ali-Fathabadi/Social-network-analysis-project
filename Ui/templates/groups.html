@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% set active = "groups" %}
+{% block title %}Groups | Data Structure Project{% endblock %}
+{% block content %}
+<header class="page-header">
+    <h2>Groups and connected components</h2>
+    <p>Layouts for isolated groups, component size, and highly connected users.</p>
+</header>
+
+<section class="grid">
+    <article class="card"><div class="label">Connected components</div><div class="value">—</div><div class="card-note">Number of independent groups</div></article>
+    <article class="card"><div class="label">Largest component</div><div class="value">—</div><div class="card-note">Users in the largest group</div></article>
+    <article class="card"><div class="label">Most connected</div><div class="value value-small">—</div><div class="card-note">Highest friendship count</div></article>
+</section>
+
+<section class="panel">
+    <div class="section-heading"><div><span class="eyebrow">Components</span><h3>Connected groups</h3></div><button class="button" id="load-groups" type="button">Load groups</button></div>
+    <div id="groups-result" class="component-grid"><div class="empty-state bordered">Group cards will appear here.</div></div>
+</section>
+
+<section class="panel">
+    <div class="section-heading"><div><span class="eyebrow">Ranking</span><h3>Most connected users</h3></div><span class="status-chip purple">Degree ranking</span></div>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Rank</th><th>User ID</th><th>Name</th><th>Friend count</th></tr></thead>
+            <tbody><tr><td colspan="4" class="empty-state">Ranking results will appear here.</td></tr></tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

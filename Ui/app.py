@@ -23,6 +23,16 @@ def distances():
     return render_template("distances.html")
 
 
+@app.get("/management")
+def management():
+    return render_template("management.html")
+
+
+@app.get("/groups")
+def groups():
+    return render_template("groups.html")
+
+
 @app.errorhandler(404)
 def not_found(_error):
     return render_template("404.html"), 404
