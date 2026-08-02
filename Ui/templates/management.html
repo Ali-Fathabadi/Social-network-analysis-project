@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% set active = "management" %}
+{% block title %}Management | Data Structure Project{% endblock %}
+{% block content %}
+<header class="page-header">
+    <h2>User and friendship management</h2>
+    <p>Forms for adding, editing, and removing users and relationships.</p>
+</header>
+
+<section class="grid management-grid">
+    <article class="panel">
+        <div class="section-heading"><div><span class="eyebrow">Users</span><h3>Add user</h3></div><span class="status-chip">Create</span></div>
+        <form id="add-user-form" class="stack-form">
+            <div class="field"><label for="add-user-id">User ID</label><input id="add-user-id" placeholder="Example: A12" required></div>
+            <div class="field"><label for="add-user-name">Name</label><input id="add-user-name" placeholder="Example: Sara" required></div>
+            <button class="button" type="submit">Add user</button>
+        </form>
+        <div id="add-user-result" class="result"></div>
+    </article>
+
+    <article class="panel">
+        <div class="section-heading"><div><span class="eyebrow">Users</span><h3>Edit user</h3></div><span class="status-chip purple">Update</span></div>
+        <form id="edit-user-form" class="stack-form">
+            <div class="field"><label for="edit-user-id">User ID</label><input id="edit-user-id" placeholder="Existing ID" required></div>
+            <div class="field"><label for="edit-user-name">New name</label><input id="edit-user-name" placeholder="Updated name" required></div>
+            <button class="button secondary" type="submit">Save changes</button>
+        </form>
+        <div id="edit-user-result" class="result"></div>
+    </article>
+
+    <article class="panel">
+        <div class="section-heading"><div><span class="eyebrow">Users</span><h3>Remove user</h3></div><span class="status-chip danger">Delete</span></div>
+        <form id="remove-user-form" class="stack-form">
+            <div class="field"><label for="remove-user-id">User ID</label><input id="remove-user-id" placeholder="User to remove" required></div>
+            <button class="button danger" type="submit">Remove user</button>
+        </form>
+        <div id="remove-user-result" class="result"></div>
+    </article>
+</section>
+
+<section class="grid management-grid two-column">
+    <article class="panel">
+        <div class="section-heading"><div><span class="eyebrow">Relationships</span><h3>Add friendship</h3></div><span class="status-chip">Connect</span></div>
+        <form id="add-friendship-form" class="form-row">
+            <div class="field"><label for="add-friend-one">First user ID</label><input id="add-friend-one" placeholder="Example: A" required></div>
+            <div class="field"><label for="add-friend-two">Second user ID</label><input id="add-friend-two" placeholder="Example: B" required></div>
+            <button class="button" type="submit">Add friendship</button>
+        </form>
+        <div id="add-friendship-result" class="result"></div>
+    </article>
+
+    <article class="panel">
+        <div class="section-heading"><div><span class="eyebrow">Relationships</span><h3>Remove friendship</h3></div><span class="status-chip danger">Disconnect</span></div>
+        <form id="remove-friendship-form" class="form-row">
+            <div class="field"><label for="remove-friend-one">First user ID</label><input id="remove-friend-one" placeholder="Example: A" required></div>
+            <div class="field"><label for="remove-friend-two">Second user ID</label><input id="remove-friend-two" placeholder="Example: B" required></div>
+            <button class="button danger" type="submit">Remove friendship</button>
+        </form>
+        <div id="remove-friendship-result" class="result"></div>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="section-heading"><div><span class="eyebrow">Directory</span><h3>User list</h3></div><button class="button ghost" id="refresh-user-table" type="button">Refresh view</button></div>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>ID</th><th>Name</th><th>Friends</th><th>Actions</th></tr></thead>
+            <tbody><tr><td colspan="4" class="empty-state">User records will appear here.</td></tr></tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
