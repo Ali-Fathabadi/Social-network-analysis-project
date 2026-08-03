@@ -27,15 +27,3 @@ static std::unordered_map<std::string, int> multiSourceBFS(
 
 // مرکز یک مؤلفه: راسی با کمترین "بیشینه فاصله تا بقیه‌ی اعضا"
 // (یعنی خبر با شروع از این راس، در کمترین زمان به کل مؤلفه می‌رسد)
-static std::string findComponentCenter(const Graph& g, const std::vector<std::string>& component) {
-    std::string best;
-    int bestEcc = std::numeric_limits<int>::max();
-    for (const std::string& candidate : component) {
-        auto dist = multiSourceBFS(g, {candidate});
-        int ecc = 0;
-        for (const std::string& other : component)
-            ecc = std::max(ecc, dist.count(other) ? dist[other] : 0);
-        if (ecc < bestEcc) { bestEcc = ecc; best = candidate; }
-    }
-    return best;
-}
