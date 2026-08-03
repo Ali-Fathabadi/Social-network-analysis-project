@@ -1,3 +1,5 @@
+#include "FriendRecommendation.h"
+#include "CommunityDetection.h"
 #include "Graph.h"
 #include "Algorithms.h"
 #include "json.h"
