@@ -6,7 +6,7 @@
 
 class Graph {
 public:
-    
+
     bool addUser(const std::string& id, const std::string& name);
     bool removeUser(const std::string& id);
     bool editUser(const std::string& id, const std::string& newName);
@@ -14,8 +14,8 @@ public:
     bool addFriendship(const std::string& id1, const std::string& id2);
     bool removeFriendship(const std::string& id1, const std::string& id2);
 
-    
-    bool findUser(const std::string& id) const;   
+
+    bool findUser(const std::string& id) const;
     const User* getUser(const std::string& id) const;
     bool areFriends(const std::string& id1, const std::string& id2) const;
     const std::unordered_map<std::string, User>& getAllUsers() const;
@@ -28,6 +28,6 @@ public:
     bool loadFromFile(const std::string& path);
 
 private:
-    std::unordered_map<std::string, User> users;                                 
-    std::unordered_map<std::string, std::unordered_set<std::string>> adjacency;  
+    std::unordered_map<std::string, User> users;
+    std::unordered_map<std::string, std::unordered_set<std::string>> adjacency;
 };
