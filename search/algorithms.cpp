@@ -8,9 +8,7 @@
 
 namespace algo {
 
-// ---------- 5. findConnectedComponents ----------
-// BFS-based component discovery. Also reused internally by networkStatistics
-// to find the largest component size. O(V+E)
+
 std::vector<std::vector<std::string>> findConnectedComponents(const Graph& g) {
     std::vector<std::vector<std::string>> components;
     std::unordered_set<std::string> visited;
@@ -32,7 +30,6 @@ std::vector<std::vector<std::string>> findConnectedComponents(const Graph& g) {
         }
         components.push_back(std::move(component));
     }
-    // deterministic order: sort ids within each group, then sort groups by their smallest id
     for (auto& comp : components) std::sort(comp.begin(), comp.end());
     std::sort(components.begin(), components.end(), [](const auto& a, const auto& b) {
         return a.front() < b.front();
@@ -40,7 +37,6 @@ std::vector<std::vector<std::string>> findConnectedComponents(const Graph& g) {
     return components;
 }
 
-// ---------- 8. networkStatistics ----------
 NetworkStats networkStatistics(const Graph& g) {
     NetworkStats stats;
     stats.totalUsers = g.userCount();
@@ -51,7 +47,6 @@ NetworkStats networkStatistics(const Graph& g) {
     for (const auto& [id, friends] : g.getAdjacency()) {
         edgeSum += friends.size();
         int count = (int)friends.size();
-        // tie-break: lexicographically smallest id, for deterministic output
         if (count > bestCount || (count == bestCount && (bestId.empty() || id < bestId))) {
             bestCount = count;
             bestId = id;
@@ -73,7 +68,6 @@ NetworkStats networkStatistics(const Graph& g) {
     return stats;
 }
 
-// ---------- 6. findMostConnectedUsers ----------
 std::vector<DegreeEntry> findMostConnectedUsers(const Graph& g) {
     std::vector<DegreeEntry> result;
     for (const auto& [id, friends] : g.getAdjacency()) {
@@ -81,17 +75,15 @@ std::vector<DegreeEntry> findMostConnectedUsers(const Graph& g) {
     }
     std::sort(result.begin(), result.end(), [](const DegreeEntry& a, const DegreeEntry& b) {
         if (a.friendCount != b.friendCount) return a.friendCount > b.friendCount;
-        return a.id < b.id; // deterministic tie-break
+        return a.id < b.id; 
     });
     return result;
 }
 
-// ---------- 7. mutualFriends ----------
 std::vector<std::string> mutualFriends(const Graph& g, const std::string& a, const std::string& b) {
     std::vector<std::string> result;
     const auto& friendsA = g.getFriends(a);
     const auto& friendsB = g.getFriends(b);
-    // iterate the smaller set for efficiency
     const auto& smaller = friendsA.size() <= friendsB.size() ? friendsA : friendsB;
     const auto& larger  = friendsA.size() <= friendsB.size() ? friendsB : friendsA;
     for (const std::string& f : smaller) {
@@ -101,21 +93,19 @@ std::vector<std::string> mutualFriends(const Graph& g, const std::string& a, con
     return result;
 }
 
-// ---------- Optional 1: findKeyUsers (betweenness centrality, Brandes) ----------
 std::vector<std::string> findKeyUsers(const Graph& g) {
     std::unordered_map<std::string, double> centrality;
     for (const auto& [id, user] : g.getAllUsers()) centrality[id] = 0.0;
 
     for (const auto& [s, userS] : g.getAllUsers()) {
-        // single-source shortest paths (BFS) bookkeeping, per Brandes 2001
         std::unordered_map<std::string, std::vector<std::string>> predecessors;
-        std::unordered_map<std::string, long long> sigma;   // # shortest paths from s
+        std::unordered_map<std::string, long long> sigma;   
         std::unordered_map<std::string, int> dist;
         for (const auto& [id, user] : g.getAllUsers()) { sigma[id] = 0; dist[id] = -1; }
         sigma[s] = 1;
         dist[s] = 0;
 
-        std::stack<std::string> order; // visitation order, for back-propagation
+        std::stack<std::string> order; 
         std::queue<std::string> q;
         q.push(s);
         while (!q.empty()) {
@@ -145,7 +135,6 @@ std::vector<std::string> findKeyUsers(const Graph& g) {
         }
     }
 
-    // Undirected graph: every shortest path was counted from both endpoints' BFS.
     double maxVal = 0.0;
     for (auto& [id, val] : centrality) {
         val /= 2.0;
@@ -162,4 +151,4 @@ std::vector<std::string> findKeyUsers(const Graph& g) {
     return keyUsers;
 }
 
-} // namespace algo
+} 
