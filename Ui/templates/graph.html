@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% set active = "graph" %}
+{% block title %}Graph View | Data Structure Project{% endblock %}
+{% block content %}
+<header class="page-header page-header-row">
+    <div><span class="eyebrow">Visualization</span><h2>Graph view</h2><p>Interactive canvas layout for users and friendship edges.</p></div>
+    <span class="status-chip purple">Interface preview</span>
+</header>
+
+<section class="graph-layout">
+    <article class="panel graph-panel">
+        <div class="graph-toolbar">
+            <div class="toolbar-group"><button class="button ghost" id="graph-reset" type="button">Reset view</button><button class="button ghost" id="graph-labels" type="button">Hide labels</button></div>
+            <div class="graph-legend"><span><i class="legend-dot user-dot"></i>User</span><span><i class="legend-line"></i>Friendship</span></div>
+        </div>
+        <div class="canvas-shell"><canvas id="graph-canvas" aria-label="Graph visualization preview"></canvas><div class="canvas-note">Preview nodes demonstrate the interface only.</div></div>
+    </article>
+
+    <aside class="panel graph-details">
+        <span class="eyebrow">Selection</span><h3>Node details</h3>
+        <div id="node-details" class="node-details"><div class="empty-state">Select a node in the canvas.</div></div>
+        <div class="divider"></div>
+        <span class="eyebrow">Display</span>
+        <div class="range-field"><label for="node-size">Node size</label><input id="node-size" type="range" min="12" max="28" value="18"></div>
+    </aside>
+</section>
+{% endblock %}

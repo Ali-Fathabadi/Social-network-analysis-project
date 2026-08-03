@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% set active = "insights" %}
+{% block title %}Insights | Data Structure Project{% endblock %}
+{% block content %}
+<header class="page-header"><span class="eyebrow">Extended analysis</span><h2>Network insights</h2><p>Interface sections for key users, communities, and news-spread selection.</p></header>
+
+<section class="grid insights-grid">
+    <article class="panel">
+        <div class="section-heading"><div><span class="eyebrow">Centrality</span><h3>Key users</h3></div><span class="status-chip purple">Betweenness</span></div>
+        <p class="panel-copy">Rank users that frequently appear on shortest paths.</p>
+        <button class="button" id="key-users-button" type="button">Prepare ranking</button><div id="key-users-result" class="result"></div>
+    </article>
+    <article class="panel">
+        <div class="section-heading"><div><span class="eyebrow">Communities</span><h3>Community detection</h3></div><span class="status-chip">Clusters</span></div>
+        <p class="panel-copy">Display smaller communities inside a connected component.</p>
+        <button class="button" id="community-button" type="button">Prepare communities</button><div id="community-result" class="result"></div>
+    </article>
+    <article class="panel">
+        <div class="section-heading"><div><span class="eyebrow">Propagation</span><h3>News spread</h3></div><span class="status-chip purple">Initial users</span></div>
+        <form id="spread-form" class="stack-form"><div class="field"><label for="spread-count">Number of initial users (K)</label><input id="spread-count" type="number" min="1" placeholder="Example: 3" required></div><button class="button secondary" type="submit">Prepare selection</button></form>
+        <div id="spread-result" class="result"></div>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="section-heading"><div><span class="eyebrow">Interface behavior</span><h3>Result states</h3></div></div>
+    <div class="state-grid">
+        <article class="state-card"><span class="state-badge loading-badge">Loading</span><p>Used while an operation is being processed.</p></article>
+        <article class="state-card"><span class="state-badge empty-badge">Empty</span><p>Used when no matching users or groups exist.</p></article>
+        <article class="state-card"><span class="state-badge error-badge">Error</span><p>Used for invalid input or failed operations.</p></article>
+    </div>
+</section>
+{% endblock %}
