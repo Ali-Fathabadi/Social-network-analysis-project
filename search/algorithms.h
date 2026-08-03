@@ -1,6 +1,3 @@
-// Algorithms.h - Graph algorithms built strictly on Graph's public API
-// (getAllUsers, getFriends, getAdjacency, userCount). No new members were
-// added to Graph; all algorithm logic lives here, separate from data storage.
 #pragma once
 #include "Graph.h"
 #include <string>
