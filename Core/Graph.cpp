@@ -1,9 +1,8 @@
 #include "Graph.h"
+#include "json.h"
 #include <fstream>
 #include <sstream>
 #include <vector>
-
-
 
 bool Graph::addUser(const std::string& id, const std::string& name) {
     if (users.count(id)) return false; // شناسه تکراری مجاز نیست
@@ -14,7 +13,6 @@ bool Graph::addUser(const std::string& id, const std::string& name) {
 
 bool Graph::removeUser(const std::string& id) {
     if (!users.count(id)) return false;
-    // حذف کاربر از لیست دوستان همه ی دوستانش
     for (const std::string& friendId : adjacency[id]) {
         adjacency[friendId].erase(id);
     }
@@ -44,8 +42,6 @@ bool Graph::removeFriendship(const std::string& id1, const std::string& id2) {
     return true;
 }
 
-
-
 bool Graph::findUser(const std::string& id) const { return users.count(id) > 0; }
 
 const User* Graph::getUser(const std::string& id) const {
@@ -71,64 +67,44 @@ const std::unordered_map<std::string, std::unordered_set<std::string>>& Graph::g
     return adjacency;
 }
 
-
-static std::string escapeJson(const std::string& s) {
-    std::string out;
-    out.reserve(s.size());
-    for (char c : s) {
-        if (c == '"' || c == '\\') out += '\\';
-        out += c;
-    }
-    return out;
-}
-
-
-static size_t findMatching(const std::string& s, size_t start) {
-    char open = s[start];
-    char close = (open == '[') ? ']' : '}';
-    int depth = 0;
-    for (size_t i = start; i < s.size(); ++i) {
-        if (s[i] == open) depth++;
-        else if (s[i] == close) {
-            depth--;
-            if (depth == 0) return i;
-        }
-    }
-    return std::string::npos;
-}
-
+// ---------------- Persistence (JSON via json.h) ----------------
+// { "users": [ {"id": "...", "name": "..."}, ... ],
+//   "edges": [ ["A","B"], ... ] }
+// Uses json.h (real parser/serializer with escape + unescape) instead of
+// hand-rolled string search, so names with quotes/backslashes/unicode
+// round-trip correctly.
 
 bool Graph::saveToFile(const std::string& path) const {
-    std::ofstream file(path);
-    if (!file.is_open()) return false;
+    json::Value root = json::Value::makeObject();
 
-    file << "{\n  \"users\": [\n";
-    size_t count = 0, total = users.size();
+    json::Value usersArr = json::Value::makeArray();
     for (const auto& [id, user] : users) {
-        file << "    {\"id\": \"" << escapeJson(user.id) << "\", \"name\": \""
-             << escapeJson(user.name) << "\"}";
-        if (++count < total) file << ",";
-        file << "\n";
+        json::Value uv = json::Value::makeObject();
+        uv["id"] = json::Value(user.id);
+        uv["name"] = json::Value(user.name);
+        usersArr.push_back(uv);
     }
-    file << "  ],\n  \"edges\": [\n";
+    root["users"] = usersArr;
 
-   
     std::vector<std::pair<std::string, std::string>> edges;
     for (const auto& [id, friends] : adjacency)
         for (const std::string& f : friends)
             if (id < f) edges.push_back({id, f});
 
-    for (size_t i = 0; i < edges.size(); ++i) {
-        file << "    [\"" << escapeJson(edges[i].first) << "\", \""
-             << escapeJson(edges[i].second) << "\"]";
-        if (i + 1 < edges.size()) file << ",";
-        file << "\n";
+    json::Value edgesArr = json::Value::makeArray();
+    for (const auto& e : edges) {
+        json::Value pair = json::Value::makeArray();
+        pair.push_back(json::Value(e.first));
+        pair.push_back(json::Value(e.second));
+        edgesArr.push_back(pair);
     }
-    file << "  ]\n}\n";
+    root["edges"] = edgesArr;
+
+    std::ofstream file(path);
+    if (!file.is_open()) return false;
+    file << root.dump();
     return true;
 }
-
-
 
 bool Graph::loadFromFile(const std::string& path) {
     std::ifstream file(path);
@@ -141,55 +117,39 @@ bool Graph::loadFromFile(const std::string& path) {
     users.clear();
     adjacency.clear();
 
-   
-    size_t usersPos = content.find("\"users\"");
-    if (usersPos == std::string::npos) return false;
-    size_t usersArrStart = content.find('[', usersPos);
-    size_t usersArrEnd = findMatching(content, usersArrStart);
-    std::string usersBlock = content.substr(usersArrStart, usersArrEnd - usersArrStart + 1);
+    if (content.empty()) return true;
 
-    size_t pos = 0;
-    while ((pos = usersBlock.find('{', pos)) != std::string::npos) {
-        size_t objEnd = findMatching(usersBlock, pos);
-        std::string obj = usersBlock.substr(pos, objEnd - pos + 1);
-
-        size_t idPos = obj.find("\"id\"");
-        size_t idColon = obj.find(':', idPos);
-        size_t idQ1 = obj.find('"', idColon + 1);
-        size_t idQ2 = obj.find('"', idQ1 + 1);
-        std::string id = obj.substr(idQ1 + 1, idQ2 - idQ1 - 1);
-
-        size_t namePos = obj.find("\"name\"");
-        size_t nameColon = obj.find(':', namePos);
-        size_t q1 = obj.find('"', nameColon + 1);
-        size_t q2 = obj.find('"', q1 + 1);
-        std::string name = obj.substr(q1 + 1, q2 - q1 - 1);
-
-        users[id] = User{id, name};
-        adjacency[id];
-        pos = objEnd + 1;
+    json::Value root;
+    try {
+        root = json::Value::parse(content);
+    } catch (const std::exception&) {
+        return false;
     }
 
-    
-    size_t edgesPos = content.find("\"edges\"");
-    if (edgesPos == std::string::npos) return true; // بدون یال هم مجاز است
-    size_t edgesArrStart = content.find('[', edgesPos);
-    size_t edgesArrEnd = findMatching(content, edgesArrStart);
-    std::string edgesBlock = content.substr(edgesArrStart, edgesArrEnd - edgesArrStart + 1);
+    if (root.type != json::Type::Object || !root.objVal->has("users")) return false;
 
-    pos = 0;
-    while ((pos = edgesBlock.find('[', pos + 1)) != std::string::npos) {
-        size_t objEnd = findMatching(edgesBlock, pos);
-        std::string pairStr = edgesBlock.substr(pos + 1, objEnd - pos - 1);
-        size_t aQ1 = pairStr.find('"');
-        size_t aQ2 = pairStr.find('"', aQ1 + 1);
-        size_t bQ1 = pairStr.find('"', aQ2 + 1);
-        size_t bQ2 = pairStr.find('"', bQ1 + 1);
-        if (aQ1 == std::string::npos || bQ1 == std::string::npos) { pos = objEnd; continue; }
-        std::string a = pairStr.substr(aQ1 + 1, aQ2 - aQ1 - 1);
-        std::string b = pairStr.substr(bQ1 + 1, bQ2 - bQ1 - 1);
-        addFriendship(a, b);
-        pos = objEnd;
+    const json::Value& usersArr = root.objVal->at("users");
+    if (usersArr.type == json::Type::Array) {
+        for (const auto& uv : *usersArr.arrVal) {
+            if (uv.type != json::Type::Object) continue;
+            std::string id = uv.objVal->has("id") ? uv.objVal->at("id").strVal : "";
+            std::string name = uv.objVal->has("name") ? uv.objVal->at("name").strVal : "";
+            if (id.empty()) continue;
+            users[id] = User{id, name};
+            adjacency[id];
+        }
+    }
+
+    if (root.objVal->has("edges")) {
+        const json::Value& edgesArr = root.objVal->at("edges");
+        if (edgesArr.type == json::Type::Array) {
+            for (const auto& pv : *edgesArr.arrVal) {
+                if (pv.type != json::Type::Array || pv.arrVal->size() < 2) continue;
+                const std::string& a = (*pv.arrVal)[0].strVal;
+                const std::string& b = (*pv.arrVal)[1].strVal;
+                addFriendship(a, b);
+            }
+        }
     }
 
     return true;
