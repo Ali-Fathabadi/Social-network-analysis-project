@@ -135,19 +135,7 @@ int main(int argc, char* argv[]) {
         root["components"] = arr;
         std::cout << root.dump() << "\n";
     }
-    else if (cmd == "findConnectedComponents") {
-        std::vector<std::vector<std::string>> components = algo::findConnectedComponents(g);
-        json::Value arr = json::Value::makeArray();
-        for (const auto& comp : components) {
-            json::Value inner = json::Value::makeArray();
-            for (const auto& id : comp) inner.push_back(json::Value(id));
-            arr.push_back(inner);
-        }
-        json::Value root = json::Value::makeObject();
-        root["status"] = json::Value("success");
-        root["components"] = arr;
-        std::cout << root.dump() << "\n";
-    }
+ 
     else if (cmd == "networkStatistics") {
         algo::NetworkStats stats = algo::networkStatistics(g);
         json::Value root = json::Value::makeObject();
