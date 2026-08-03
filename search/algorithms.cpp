@@ -33,7 +33,6 @@ static std::vector<std::vector<std::string>> connectedComponentsInternal(const G
     return components;
 }
 
-// ---------- 8. networkStatistics ----------
 NetworkStats networkStatistics(const Graph& g) {
     NetworkStats stats;
     stats.totalUsers = g.userCount();
