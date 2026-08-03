@@ -1,6 +1,3 @@
-// json.h - Minimal dependency-free JSON library for this project.
-// Supports: null, bool, number (as double, printed as int when integral),
-// string, array, object (insertion-ordered).
 #pragma once
 #include <string>
 #include <vector>
@@ -16,7 +13,7 @@ namespace json {
 class Value;
 using Array = std::vector<Value>;
 
-// Ordered key-value list (preserves insertion order, unlike std::map)
+
 class Object {
 public:
     std::vector<std::pair<std::string, Value>> items;
@@ -63,7 +60,7 @@ public:
 
     bool isNull() const { return type == Type::Null; }
 
-    // ---------- Serialization ----------
+  
     std::string dump() const {
         std::ostringstream os;
         write(os);
@@ -129,7 +126,7 @@ public:
         os << "\"";
     }
 
-    // ---------- Parsing ----------
+    
     static Value parse(const std::string& s) {
         size_t pos = 0;
         skipWs(s, pos);
@@ -202,7 +199,7 @@ private:
                 pos++;
             }
         }
-        pos++; // skip closing quote
+        pos++; 
         return out;
     }
 
@@ -269,4 +266,4 @@ inline const Value& Object::at(const std::string& key) const {
     throw std::runtime_error("Key not found: " + key);
 }
 
-} // namespace json
+} 
