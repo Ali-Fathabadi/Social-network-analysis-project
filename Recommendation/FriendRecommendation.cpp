@@ -31,6 +31,22 @@ recommendFriends(const Graph& g, const std::string& userId)
         }
     }
 
-    
+    for (const auto& p : score)
+    {
+        result.push_back({p.first,p.second});
+    }
+
+    std::sort(result.begin(), result.end(),
+        [](const FriendSuggestion& a,
+           const FriendSuggestion& b)
+        {
+            if (a.mutualCount != b.mutualCount)
+                return a.mutualCount > b.mutualCount;
+
+            return a.id < b.id;
+        });
+
+    return result;
+}
 
 }
