@@ -175,6 +175,35 @@ int main(int argc, char* argv[]) {
         root["mutual_friends"] = arr;
         std::cout << root.dump() << "\n";
     }
+        else if (cmd == "recommendFriends") {
+    if (argc < 3) {
+        printError("Usage: recommendFriends <id>");
+        return 1;
+    }
+
+    if (!g.findUser(argv[2])) {
+        printError("User not found");
+        return 1;
+    }
+
+    std::vector<algo::FriendSuggestion> suggestions =
+        algo::recommendFriends(g, argv[2]);
+
+    json::Value arr = json::Value::makeArray();
+
+    for (const auto& s : suggestions) {
+        json::Value obj = json::Value::makeObject();
+        obj["id"] = json::Value(s.id);
+        obj["mutual_count"] = json::Value(s.mutualCount);
+        arr.push_back(obj);
+    }
+
+    json::Value root = json::Value::makeObject();
+    root["status"] = json::Value("success");
+    root["suggestions"] = arr;
+
+    std::cout << root.dump() << "\n";
+}
     else if (cmd == "findKeyUsers") {
         std::vector<std::string> keyUsers = algo::findKeyUsers(g);
         json::Value arr = json::Value::makeArray();
@@ -184,6 +213,36 @@ int main(int argc, char* argv[]) {
         root["key_users"] = arr;
         std::cout << root.dump() << "\n";
     }
+        else if (cmd == "communityDetection") {
+
+    std::vector<algo::Community> communities =
+        algo::communityDetection(g);
+
+    json::Value arr = json::Value::makeArray();
+
+    for (const auto& c : communities) {
+
+        json::Value obj = json::Value::makeObject();
+
+        obj["id"] = json::Value(c.id);
+
+        json::Value members = json::Value::makeArray();
+
+        for (const auto& id : c.members)
+            members.push_back(json::Value(id));
+
+        obj["members"] = members;
+
+        arr.push_back(obj);
+    }
+
+    json::Value root = json::Value::makeObject();
+
+    root["status"] = json::Value("success");
+    root["communities"] = arr;
+
+    std::cout << root.dump() << "\n";
+}
     else {
         printError("Unknown command: " + cmd);
         return 1;
