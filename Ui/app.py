@@ -33,6 +33,16 @@ def groups():
     return render_template("groups.html")
 
 
+@app.get("/graph")
+def graph():
+    return render_template("graph.html")
+
+
+@app.get("/insights")
+def insights():
+    return render_template("insights.html")
+
+
 @app.errorhandler(404)
 def not_found(_error):
     return render_template("404.html"), 404

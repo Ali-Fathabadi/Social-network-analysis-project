@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <aside class="sidebar">
+    <button class="mobile-menu" id="mobile-menu" type="button" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+    <aside class="sidebar" id="sidebar">
         <div class="brand">
             <h1>Data Structure Project</h1>
             <p>Social graph interface</p>
@@ -19,6 +20,8 @@
             <a href="/distances" class="{% if active == 'distances' %}active{% endif %}">Distances</a>
             <a href="/management" class="{% if active == 'management' %}active{% endif %}">Management</a>
             <a href="/groups" class="{% if active == 'groups' %}active{% endif %}">Groups</a>
+            <a href="/graph" class="{% if active == 'graph' %}active{% endif %}">Graph view</a>
+            <a href="/insights" class="{% if active == 'insights' %}active{% endif %}">Insights</a>
         </nav>
     </aside>
 
