@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 static const std::string DB_PATH = "network.json";
 
@@ -114,6 +115,38 @@ int main(int argc, char* argv[]) {
         if (!g.findUser(argv[2])) { printError("User not found"); return 1; }
         std::vector<std::string> friends(g.getFriends(argv[2]).begin(), g.getFriends(argv[2]).end());
         std::cout << "{\"status\": \"success\", \"friends\": " << jsonStringArray(friends) << "}\n";
+    }
+    else if (cmd == "findConnectedComponents") {
+        std::vector<std::vector<std::string>> components = algo::findConnectedComponents(g);
+        // sort within each component and sort components (by smallest id) for
+        // deterministic, reproducible output
+        for (auto& comp : components) std::sort(comp.begin(), comp.end());
+        std::sort(components.begin(), components.end(), [](const auto& a, const auto& b) {
+            return a.front() < b.front();
+        });
+        json::Value arr = json::Value::makeArray();
+        for (const auto& comp : components) {
+            json::Value compArr = json::Value::makeArray();
+            for (const auto& id : comp) compArr.push_back(json::Value(id));
+            arr.push_back(compArr);
+        }
+        json::Value root = json::Value::makeObject();
+        root["status"] = json::Value("success");
+        root["components"] = arr;
+        std::cout << root.dump() << "\n";
+    }
+    else if (cmd == "findConnectedComponents") {
+        std::vector<std::vector<std::string>> components = algo::findConnectedComponents(g);
+        json::Value arr = json::Value::makeArray();
+        for (const auto& comp : components) {
+            json::Value inner = json::Value::makeArray();
+            for (const auto& id : comp) inner.push_back(json::Value(id));
+            arr.push_back(inner);
+        }
+        json::Value root = json::Value::makeObject();
+        root["status"] = json::Value("success");
+        root["components"] = arr;
+        std::cout << root.dump() << "\n";
     }
     else if (cmd == "networkStatistics") {
         algo::NetworkStats stats = algo::networkStatistics(g);
