@@ -99,5 +99,52 @@ std::vector<std::string> findKeyUsers(const Graph& g) {
         for (const auto& [id, user] : g.getAllUsers()) { sigma[id] = 0; dist[id] = -1; }
         sigma[s] = 1;
         dist[s] = 0;
+std::stack<std::string> order;
+        std::queue<std::string> q;
+        q.push(s);
+        while (!q.empty()) {
+            std::string v = q.front(); q.pop();
+            order.push(v);
+            for (const std::string& w : g.getFriends(v)) {
+                if (dist[w] < 0) {
+                    dist[w] = dist[v] + 1;
+                    q.push(w);
+                }
+                if (dist[w] == dist[v] + 1) {
+                    sigma[w] += sigma[v];
+                    predecessors[w].push_back(v);
+                }
+            }
+        }
+
+        std::unordered_map<std::string, double> delta;
+        for (const auto& [id, user] : g.getAllUsers()) delta[id] = 0.0;
+
+        while (!order.empty()) {
+            std::string w = order.top(); order.pop();
+            for (const std::string& v : predecessors[w]) {
+                delta[v] += ((double)sigma[v] / (double)sigma[w]) * (1.0 + delta[w]);
+            }
+            if (w != s) centrality[w] += delta[w];
+        }
+    }
+
+    double maxVal = 0.0;
+    for (auto& [id, val] : centrality) {
+        val /= 2.0;
+        maxVal = std::max(maxVal, val);
+    }
+
+    std::vector<std::string> keyUsers;
+    if (maxVal > 1e-9) {
+        for (const auto& [id, val] : centrality) {
+            if (std::abs(val - maxVal) < 1e-6) keyUsers.push_back(id);
+        }
+        std::sort(keyUsers.begin(), keyUsers.end());
+    }
+    return keyUsers;
+}
+
+}
 
 
