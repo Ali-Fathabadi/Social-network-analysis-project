@@ -63,7 +63,6 @@ NetworkStats networkStatistics(const Graph& g) {
 
     return stats;
 }
-// ---------- 6. findMostConnectedUsers ----------
 std::vector<DegreeEntry> findMostConnectedUsers(const Graph& g) {
     std::vector<DegreeEntry> result;
     for (const auto& [id, friends] : g.getAdjacency()) {
@@ -71,17 +70,15 @@ std::vector<DegreeEntry> findMostConnectedUsers(const Graph& g) {
     }
     std::sort(result.begin(), result.end(), [](const DegreeEntry& a, const DegreeEntry& b) {
         if (a.friendCount != b.friendCount) return a.friendCount > b.friendCount;
-        return a.id < b.id; // deterministic tie-break
+        return a.id < b.id; 
     });
     return result;
 }
 
-// ---------- 7. mutualFriends ----------
 std::vector<std::string> mutualFriends(const Graph& g, const std::string& a, const std::string& b) {
     std::vector<std::string> result;
     const auto& friendsA = g.getFriends(a);
     const auto& friendsB = g.getFriends(b);
-    // iterate the smaller set for efficiency
     const auto& smaller = friendsA.size() <= friendsB.size() ? friendsA : friendsB;
     const auto& larger  = friendsA.size() <= friendsB.size() ? friendsB : friendsA;
     for (const std::string& f : smaller) {
@@ -91,13 +88,11 @@ std::vector<std::string> mutualFriends(const Graph& g, const std::string& a, con
     return result;
 }
 
-// ---------- Optional 1: findKeyUsers (betweenness centrality, Brandes) ----------
 std::vector<std::string> findKeyUsers(const Graph& g) {
     std::unordered_map<std::string, double> centrality;
     for (const auto& [id, user] : g.getAllUsers()) centrality[id] = 0.0;
 
     for (const auto& [s, userS] : g.getAllUsers()) {
-        // single-source shortest paths (BFS) bookkeeping, per Brandes 2001
         std::unordered_map<std::string, std::vector<std::string>> predecessors;
         std::unordered_map<std::string, long long> sigma;   // # shortest paths from s
         std::unordered_map<std::string, int> dist;
