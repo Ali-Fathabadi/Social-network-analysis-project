@@ -1,4 +1,6 @@
 #include "Graph.h"
+#include "Algorithms.h"
+#include "json.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -31,7 +33,7 @@ static std::string jsonStringArray(const std::vector<std::string>& items) {
 
 int main(int argc, char* argv[]) {
     Graph g;
-    g.loadFromFile(DB_PATH); // اگر فایل وجود نداشته باشد، گراف خالی باقی می ماند
+    g.loadFromFile(DB_PATH); // اگر فایل وجود نداشته باشد، گراف خالی باقی می‌ماند
 
     if (argc < 2) {
         printError("No command provided");
@@ -112,6 +114,52 @@ int main(int argc, char* argv[]) {
         if (!g.findUser(argv[2])) { printError("User not found"); return 1; }
         std::vector<std::string> friends(g.getFriends(argv[2]).begin(), g.getFriends(argv[2]).end());
         std::cout << "{\"status\": \"success\", \"friends\": " << jsonStringArray(friends) << "}\n";
+    }
+    else if (cmd == "networkStatistics") {
+        algo::NetworkStats stats = algo::networkStatistics(g);
+        json::Value root = json::Value::makeObject();
+        root["status"] = json::Value("success");
+        root["total_users"] = json::Value((double)stats.totalUsers);
+        root["total_edges"] = json::Value((double)stats.totalEdges);
+        root["avg_friends"] = json::Value(stats.avgFriends);
+        root["largest_comp_size"] = json::Value((double)stats.largestComponentSize);
+        root["most_connected_id"] = json::Value(stats.mostConnectedId);
+        root["most_connected_count"] = json::Value(stats.mostConnectedCount);
+        std::cout << root.dump() << "\n";
+    }
+    else if (cmd == "findMostConnectedUsers") {
+        std::vector<algo::DegreeEntry> entries = algo::findMostConnectedUsers(g);
+        json::Value arr = json::Value::makeArray();
+        for (const auto& e : entries) {
+            json::Value uv = json::Value::makeObject();
+            uv["id"] = json::Value(e.id);
+            uv["friend_count"] = json::Value(e.friendCount);
+            arr.push_back(uv);
+        }
+        json::Value root = json::Value::makeObject();
+        root["status"] = json::Value("success");
+        root["users"] = arr;
+        std::cout << root.dump() << "\n";
+    }
+    else if (cmd == "mutualFriends") {
+        if (argc < 4) { printError("Usage: mutualFriends <id1> <id2>"); return 1; }
+        if (!g.findUser(argv[2]) || !g.findUser(argv[3])) { printError("User not found"); return 1; }
+        std::vector<std::string> mutual = algo::mutualFriends(g, argv[2], argv[3]);
+        json::Value arr = json::Value::makeArray();
+        for (const auto& id : mutual) arr.push_back(json::Value(id));
+        json::Value root = json::Value::makeObject();
+        root["status"] = json::Value("success");
+        root["mutual_friends"] = arr;
+        std::cout << root.dump() << "\n";
+    }
+    else if (cmd == "findKeyUsers") {
+        std::vector<std::string> keyUsers = algo::findKeyUsers(g);
+        json::Value arr = json::Value::makeArray();
+        for (const auto& id : keyUsers) arr.push_back(json::Value(id));
+        json::Value root = json::Value::makeObject();
+        root["status"] = json::Value("success");
+        root["key_users"] = arr;
+        std::cout << root.dump() << "\n";
     }
     else {
         printError("Unknown command: " + cmd);
