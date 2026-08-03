@@ -60,3 +60,35 @@ PathResult shortestPath(const Graph& g, const std::string& from, const std::stri
         cur = parent[cur];
         path.push_back(cur);
     }
+ std::reverse(path.begin(), path.end());
+    result.path = std::move(path);
+    return result;
+}
+
+std::vector<DistanceEntry> distancesFromUser(const Graph& g, const std::string& from) {
+    std::vector<DistanceEntry> result;
+    if (!g.findUser(from)) return result;
+
+    std::unordered_map<std::string, int> dist;
+    std::unordered_map<std::string, std::string> parent;
+    bfsFrom(g, from, dist, parent);
+
+    for (const auto& [id, user] : g.getAllUsers()) {
+        if (id == from) continue; // طبق مثال سند پروژه، خود کاربر در خروجی نمی‌آید
+        int d = dist.count(id) ? dist[id] : -1; // -1 = بی‌نهایت
+        result.push_back({id, d});
+    }
+
+    // مرتب‌سازی صعودی بر اساس فاصله، بی‌نهایت‌ها آخر (طبق مثال سند پروژه)
+    std::sort(result.begin(), result.end(), [](const DistanceEntry& a, const DistanceEntry& b) {
+        if (a.distance == -1 && b.distance == -1) return a.id < b.id;
+        if (a.distance == -1) return false;
+        if (b.distance == -1) return true;
+        if (a.distance != b.distance) return a.distance < b.distance;
+        return a.id < b.id;
+    });
+
+    return result;
+}
+
+}
