@@ -94,7 +94,7 @@ std::vector<std::string> findKeyUsers(const Graph& g) {
 
     for (const auto& [s, userS] : g.getAllUsers()) {
         std::unordered_map<std::string, std::vector<std::string>> predecessors;
-        std::unordered_map<std::string, long long> sigma;   // # shortest paths from s
+        std::unordered_map<std::string, long long> sigma; 
         std::unordered_map<std::string, int> dist;
         for (const auto& [id, user] : g.getAllUsers()) { sigma[id] = 0; dist[id] = -1; }
         sigma[s] = 1;
