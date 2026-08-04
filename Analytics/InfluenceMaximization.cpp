@@ -1,5 +1,5 @@
-#include "InfluenceMaximization.h"
-#include "Algorithms.h"   // findConnectedComponents
+#include "influenceMaximization.h"
+#include "algorithms.h"   // findConnectedComponents
 #include <queue>
 #include <unordered_map>
 #include <algorithm>
