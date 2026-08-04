@@ -245,6 +245,57 @@ int main(int argc, char* argv[]) {
 
     std::cout << root.dump() << "\n";
 }
+            else if (cmd == "isConnected") {
+    if (argc < 4) { printError("Usage: isConnected <id1> <id2>"); return 1; }
+    if (!g.findUser(argv[2]) || !g.findUser(argv[3])) { printError("User not found"); return 1; }
+    bool result = algo::isConnected(g, argv[2], argv[3]);
+    std::cout << "{\"status\": \"success\", \"connected\": " << (result ? "true" : "false") << "}\n";
+}
+else if (cmd == "shortestPath") {
+    if (argc < 4) { printError("Usage: shortestPath <id1> <id2>"); return 1; }
+    if (!g.findUser(argv[2]) || !g.findUser(argv[3])) { printError("User not found"); return 1; }
+    algo::PathResult res = algo::shortestPath(g, argv[2], argv[3]);
+    json::Value root = json::Value::makeObject();
+    root["status"] = json::Value("success");
+    root["connected"] = json::Value(res.connected);
+    if (res.connected) {
+        json::Value arr = json::Value::makeArray();
+        for (const auto& id : res.path) arr.push_back(json::Value(id));
+        root["path"] = arr;
+        root["distance"] = json::Value(res.distance);
+    } else {
+        root["path"] = json::Value::makeArray();
+        root["distance"] = json::Value(nullptr);
+    }
+    std::cout << root.dump() << "\n";
+}
+else if (cmd == "distanceFromUser") {
+    if (argc < 3) { printError("Usage: distanceFromUser <id>"); return 1; }
+    if (!g.findUser(argv[2])) { printError("User not found"); return 1; }
+    std::vector<algo::DistanceEntry> entries = algo::distancesFromUser(g, argv[2]);
+    json::Value arr = json::Value::makeArray();
+    for (const auto& e : entries) {
+        json::Value obj = json::Value::makeObject();
+        obj["id"] = json::Value(e.id);
+        obj["distance"] = e.distance < 0 ? json::Value(nullptr) : json::Value(e.distance);
+        arr.push_back(obj);
+    }
+    json::Value root = json::Value::makeObject();
+    root["status"] = json::Value("success");
+    root["distances"] = arr;
+    std::cout << root.dump() << "\n";
+}
+else if (cmd == "optimizeNewsSpread") {
+    if (argc < 3) { printError("Usage: optimizeNewsSpread <k>"); return 1; }
+    int k = std::atoi(argv[2]);
+    std::vector<std::string> seeds = algo::optimizeNewsSpread(g, k);
+    json::Value arr = json::Value::makeArray();
+    for (const auto& id : seeds) arr.push_back(json::Value(id));
+    json::Value root = json::Value::makeObject();
+    root["status"] = json::Value("success");
+    root["selected_users"] = arr;
+    std::cout << root.dump() << "\n";
+}
     else {
         printError("Unknown command: " + cmd);
         return 1;
