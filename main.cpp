@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
         std::cout << "{\"status\": \"success\", \"id\": \"" << escapeJson(u->id) << "\", \"name\": \""
                    << escapeJson(u->name) << "\", \"friends\": " << jsonStringArray(friends) << "}\n";
     }
-    else if (cmd == "addFriendship") {
+        else if (cmd == "addFriendship") {
         if (argc < 4) { printError("Usage: addFriendship <id1> <id2>"); return 1; }
         if (g.addFriendship(argv[2], argv[3])) {
             g.saveToFile(DB_PATH);
@@ -257,7 +257,6 @@ else if (cmd == "shortestPath") {
     algo::PathResult res = algo::shortestPath(g, argv[2], argv[3]);
     json::Value root = json::Value::makeObject();
     root["status"] = json::Value("success");
-    root["connected"] = json::Value(res.connected);
     if (res.connected) {
         json::Value arr = json::Value::makeArray();
         for (const auto& id : res.path) arr.push_back(json::Value(id));
