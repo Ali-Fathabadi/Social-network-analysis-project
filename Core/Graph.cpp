@@ -37,6 +37,9 @@ bool Graph::addFriendship(const std::string& id1, const std::string& id2) {
 
 bool Graph::removeFriendship(const std::string& id1, const std::string& id2) {
     if (!users.count(id1) || !users.count(id2)) return false;
+    // اگر اصلاً با هم دوست نبودند، عملیات باید ناموفق گزارش شود
+    auto it = adjacency.find(id1);
+    if (it == adjacency.end() || !it->second.count(id2)) return false;
     adjacency[id1].erase(id2);
     adjacency[id2].erase(id1);
     return true;
