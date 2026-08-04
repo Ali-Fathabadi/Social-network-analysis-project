@@ -62,16 +62,19 @@ std::vector<std::string> optimizeNewsSpread(const Graph& g, int k) {
     // اگر K بیشتر از تعداد مؤلفه‌ها باشد، seedهای اضافی را با الگوریتم حریصانه‌ی
     // "دورترین نقطه" (2-تقریب استاندارد برای مسئله‌ی k-center) اضافه می‌کنیم
     // تا زمان رسیدن خبر به دورترین کاربران کاهش یابد
+    std::unordered_set<std::string> seedSet(seeds.begin(), seeds.end());
     for (int i = 0; i < remaining; ++i) {
         auto dist = multiSourceBFS(g, seeds);
         std::string farthest;
         int farthestDist = -1;
         for (const auto& [id, user] : g.getAllUsers()) {
+            if (seedSet.count(id)) continue; // یک کاربر نباید دوبار seed شود
             int d = dist.count(id) ? dist[id] : 0;
             if (d > farthestDist) { farthestDist = d; farthest = id; }
         }
-        if (farthest.empty()) break;
+        if (farthest.empty()) break; // دیگر کاربر جدیدی برای انتخاب باقی نمانده
         seeds.push_back(farthest);
+        seedSet.insert(farthest);
     }
 
     std::sort(seeds.begin(), seeds.end());
