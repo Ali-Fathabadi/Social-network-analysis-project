@@ -1,5 +1,5 @@
 #include "search.h"
-#include "influenceMaximization.h"
+#include "InfluenceMaximization.h"
 #include "FriendRecommendation.h"
 #include "CommunityDetection.h"
 #include "Graph.h"
