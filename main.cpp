@@ -264,6 +264,7 @@ int main(int argc, char* argv[]) {
         root["total_edges"] = json::Value(stats.totalEdges);
         root["avg_friends"] = json::Value(stats.avgFriends);
         root["largest_comp_size"] = json::Value(stats.largestComponentSize);
+        root["largest_component"] = stringArray(stats.largest_component);
         root["most_connected_id"] = json::Value(stats.mostConnectedId);
         root["most_connected_count"] = json::Value(stats.mostConnectedCount);
         return printJson(root);
@@ -287,7 +288,7 @@ int main(int argc, char* argv[]) {
 
     if (command == "findMostConnectedUsers") {
         json::Value users = json::Value::makeArray();
-        for (const auto& entry : algo::degreeRanking(graph)) {
+        for (const auto& entry : algo::findMostConnectedUsers(graph)) {
             json::Value item = json::Value::makeObject();
             item["id"] = json::Value(entry.id);
             item["friend_count"] = json::Value(entry.friendCount);
