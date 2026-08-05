@@ -8,9 +8,9 @@
 </header>
 
 <section class="grid">
-    <article class="card"><div class="label">Connected components</div><div class="value">—</div><div class="card-note">Number of independent groups</div></article>
-    <article class="card"><div class="label">Largest component</div><div class="value">—</div><div class="card-note">Users in the largest group</div></article>
-    <article class="card"><div class="label">Most connected</div><div class="value value-small">—</div><div class="card-note">Highest friendship count</div></article>
+    <article class="card"><div class="label">Connected components</div><div class="value" id="component-count">—</div><div class="card-note">Number of independent groups</div></article>
+    <article class="card"><div class="label">Largest component</div><div class="value" id="largest-component-size">—</div><div class="card-note">Users in the largest group</div></article>
+    <article class="card"><div class="label">Most connected</div><div class="value value-small" id="most-connected-user">—</div><div class="card-note">Highest friendship count</div></article>
 </section>
 
 <section class="panel">
@@ -23,7 +23,7 @@
     <div class="table-wrap">
         <table>
             <thead><tr><th>Rank</th><th>User ID</th><th>Name</th><th>Friend count</th></tr></thead>
-            <tbody><tr><td colspan="4" class="empty-state">Ranking results will appear here.</td></tr></tbody>
+            <tbody id="ranking-table-body"><tr><td colspan="4" class="empty-state">Ranking results will appear here.</td></tr></tbody>
         </table>
     </div>
 </section>

@@ -25,7 +25,7 @@
 
 <section class="panel">
     <h3>Shortest path</h3>
-    <div class="path-preview">
+    <div class="path-preview" id="path-preview">
         <span class="path-node">Source</span>
         <span>→</span>
         <span class="path-node">Intermediate</span>
@@ -35,8 +35,8 @@
 </section>
 
 <section class="grid">
-    <article class="card"><div class="label">Direct friendship</div><div class="value">—</div></article>
-    <article class="card"><div class="label">Connected</div><div class="value">—</div></article>
-    <article class="card"><div class="label">Distance</div><div class="value">—</div></article>
+    <article class="card"><div class="label">Direct friendship</div><div class="value" id="path-direct">—</div></article>
+    <article class="card"><div class="label">Connected</div><div class="value" id="path-connected">—</div></article>
+    <article class="card"><div class="label">Distance</div><div class="value" id="path-distance">—</div></article>
 </section>
 {% endblock %}

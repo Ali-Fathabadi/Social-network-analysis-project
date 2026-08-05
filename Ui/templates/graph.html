@@ -4,7 +4,7 @@
 {% block content %}
 <header class="page-header page-header-row">
     <div><span class="eyebrow">Visualization</span><h2>Graph view</h2><p>Interactive canvas layout for users and friendship edges.</p></div>
-    <span class="status-chip purple">Interface preview</span>
+    <span class="status-chip purple" id="graph-status">Live data</span>
 </header>
 
 <section class="graph-layout">
@@ -13,7 +13,7 @@
             <div class="toolbar-group"><button class="button ghost" id="graph-reset" type="button">Reset view</button><button class="button ghost" id="graph-labels" type="button">Hide labels</button></div>
             <div class="graph-legend"><span><i class="legend-dot user-dot"></i>User</span><span><i class="legend-line"></i>Friendship</span></div>
         </div>
-        <div class="canvas-shell"><canvas id="graph-canvas" aria-label="Graph visualization preview"></canvas><div class="canvas-note">Preview nodes demonstrate the interface only.</div></div>
+        <div class="canvas-shell"><canvas id="graph-canvas" aria-label="Social network graph visualization"></canvas><div class="canvas-note" id="graph-note">Loading users and friendships...</div></div>
     </article>
 
     <aside class="panel graph-details">
