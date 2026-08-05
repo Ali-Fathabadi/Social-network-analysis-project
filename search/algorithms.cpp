@@ -80,76 +80,109 @@ std::vector<DegreeEntry> degreeRanking(const Graph& graph) {
     });
     return result;
 }
+std::vector<DegreeEntry> findMostConnectedUsers(const Graph& graph) {
+    std::vector<DegreeEntry> ranking = degreeRanking(graph);
+    if (ranking.empty()) return {};
+    const int maximum = ranking.front().friendCount;
+    ranking.erase(std::remove_if(ranking.begin(), ranking.end(), [maximum](const DegreeEntry& entry) {
+        return entry.friendCount != maximum;
+    }), ranking.end());
+    return ranking;
+}
 
-std::vector<std::string> mutualFriends(const Graph& g, const std::string& a, const std::string& b) {
+std::vector<std::string> mutualFriends(const Graph& graph,const std::string& first,const std::string& second)  {
     std::vector<std::string> result;
-    const auto& friendsA = g.getFriends(a);
-    const auto& friendsB = g.getFriends(b);
-    const auto& smaller = friendsA.size() <= friendsB.size() ? friendsA : friendsB;
-    const auto& larger  = friendsA.size() <= friendsB.size() ? friendsB : friendsA;
-    for (const std::string& f : smaller) {
-        if (larger.count(f)) result.push_back(f);
+    const auto& firstFriends = graph.getFriends(first);
+    const auto& secondFriends = graph.getFriends(second);
+    const auto* smaller = &firstFriends;
+    const auto* larger = &secondFriends;
+    if (firstFriends.size() > secondFriends.size()) std::swap(smaller, larger);
+
+    std::vector<std::string> result;
+    for (const std::string& id : *smaller) {
+        if (larger->count(id)) result.push_back(id);
+    }
+    std::sort(result.begin(), result.end());
+    return result;
+}
+std::vector<CentralityEntry> betweennessCentrality(const Graph& graph) {
+    std::vector<std::string> ids;
+    ids.reserve(graph.userCount());
+    for (const auto& [id, user] : graph.getAllUsers()) ids.push_back(id);
+    std::sort(ids.begin(), ids.end());
+
+    std::unordered_map<std::string, double> centrality;
+    for (const std::string& id : ids) centrality[id] = 0.0;
+
+    for (const std::string& source : ids) {
+        std::stack<std::string> order;
+        std::queue<std::string> queue;
+        std::unordered_map<std::string, std::vector<std::string>> predecessors;
+        std::unordered_map<std::string, double> pathCount;
+        std::unordered_map<std::string, int> distance;
+        for (const std::string& id : ids) {
+            pathCount[id] = 0.0;
+            distance[id] = -1;
+        }
+        pathCount[source] = 1.0;
+        distance[source] = 0;
+        queue.push(source);
+
+        while (!queue.empty()) {
+            const std::string current = queue.front();
+            queue.pop();
+            order.push(current);
+            std::vector<std::string> neighbours(graph.getFriends(current).begin(),
+                                                graph.getFriends(current).end());
+            std::sort(neighbours.begin(), neighbours.end());
+            for (const std::string& neighbour : neighbours) {
+                if (distance[neighbour] < 0) {
+                    distance[neighbour] = distance[current] + 1;
+                    queue.push(neighbour);
+                }
+                if (distance[neighbour] == distance[current] + 1) {
+                    pathCount[neighbour] += pathCount[current];
+                    predecessors[neighbour].push_back(current);
+                }
+            }
+        }
+
+        std::unordered_map<std::string, double> dependency;
+        for (const std::string& id : ids) dependency[id] = 0.0;
+        while (!order.empty()) {
+            const std::string child = order.top();
+            order.pop();
+            if (pathCount[child] > 0.0) {
+                for (const std::string& parent : predecessors[child]) {
+                    dependency[parent] += (pathCount[parent] / pathCount[child]) *
+                                          (1.0 + dependency[child]);
+                }
+            }
+            if (child != source) centrality[child] += dependency[child];
+        }
+    }
+
+    std::vector<CentralityEntry> result;
+    result.reserve(ids.size());
+    for (const std::string& id : ids) result.push_back({id, centrality[id] / 2.0});
+    std::sort(result.begin(), result.end(), [](const CentralityEntry& a, const CentralityEntry& b) {
+        if (std::abs(a.score - b.score) > 1e-9) return a.score > b.score;
+        return a.id < b.id;
+    });
+    return result;
+}
+
+std::vector<std::string> findKeyUsers(const Graph& graph) {
+    const auto ranking = betweennessCentrality(graph);
+    if (ranking.empty()) return {};
+    const double maximum = ranking.front().score;
+    if (maximum <= 1e-9) return {};
+    std::vector<std::string> result;
+    for (const auto& entry : ranking) {
+        if (std::abs(entry.score - maximum) <= 1e-9) result.push_back(entry.id);
     }
     std::sort(result.begin(), result.end());
     return result;
 }
 
-std::vector<std::string> findKeyUsers(const Graph& g) {
-    std::unordered_map<std::string, double> centrality;
-    for (const auto& [id, user] : g.getAllUsers()) centrality[id] = 0.0;
-
-    for (const auto& [s, userS] : g.getAllUsers()) {
-        std::unordered_map<std::string, std::vector<std::string>> predecessors;
-        std::unordered_map<std::string, long long> sigma;   
-        std::unordered_map<std::string, int> dist;
-        for (const auto& [id, user] : g.getAllUsers()) { sigma[id] = 0; dist[id] = -1; }
-        sigma[s] = 1;
-        dist[s] = 0;
-
-        std::stack<std::string> order; 
-        std::queue<std::string> q;
-        q.push(s);
-        while (!q.empty()) {
-            std::string v = q.front(); q.pop();
-            order.push(v);
-            for (const std::string& w : g.getFriends(v)) {
-                if (dist[w] < 0) {
-                    dist[w] = dist[v] + 1;
-                    q.push(w);
-                }
-                if (dist[w] == dist[v] + 1) {
-                    sigma[w] += sigma[v];
-                    predecessors[w].push_back(v);
-                }
-            }
-        }
-
-        std::unordered_map<std::string, double> delta;
-        for (const auto& [id, user] : g.getAllUsers()) delta[id] = 0.0;
-
-        while (!order.empty()) {
-            std::string w = order.top(); order.pop();
-            for (const std::string& v : predecessors[w]) {
-                delta[v] += ((double)sigma[v] / (double)sigma[w]) * (1.0 + delta[w]);
-            }
-            if (w != s) centrality[w] += delta[w];
-        }
-    }
-
-    double maxVal = 0.0;
-    for (auto& [id, val] : centrality) {
-        val /= 2.0;
-        maxVal = std::max(maxVal, val);
-    }
-
-    std::vector<std::string> keyUsers;
-    if (maxVal > 1e-9) {
-        for (const auto& [id, val] : centrality) {
-            if (std::abs(val - maxVal) < 1e-6) keyUsers.push_back(id);
-        }
-        std::sort(keyUsers.begin(), keyUsers.end());
-    }
-    return keyUsers;
-}
-
-} 
+}  // namespace algo
