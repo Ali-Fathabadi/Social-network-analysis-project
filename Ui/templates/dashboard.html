@@ -8,14 +8,14 @@
 </header>
 
 <section class="grid">
-    <article class="card"><div class="label">Total users</div><div class="value">—</div></article>
-    <article class="card"><div class="label">Friendships</div><div class="value">—</div></article>
-    <article class="card"><div class="label">Average friends</div><div class="value">—</div></article>
-    <article class="card"><div class="label">Largest group</div><div class="value">—</div></article>
+    <article class="card"><div class="label">Total users</div><div class="value" id="stats-total-users">—</div></article>
+    <article class="card"><div class="label">Friendships</div><div class="value" id="stats-total-edges">—</div></article>
+    <article class="card"><div class="label">Average friends</div><div class="value" id="stats-average-friends">—</div></article>
+    <article class="card"><div class="label">Largest group</div><div class="value" id="stats-largest-group">—</div></article>
 </section>
 
 <section class="panel">
-    <h3>Interface sections</h3>
+    <div class="section-heading"><div><h3>Implemented sections</h3><p id="dashboard-status" class="panel-copy">Loading live data from the C++ core...</p></div><button class="button ghost" id="refresh-dashboard" type="button">Refresh</button></div>
     <div class="placeholder-list">
         <span class="tag">User search</span>
         <span class="tag">Friend lists</span>
