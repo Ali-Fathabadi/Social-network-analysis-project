@@ -91,7 +91,6 @@ std::vector<DegreeEntry> findMostConnectedUsers(const Graph& graph) {
 }
 
 std::vector<std::string> mutualFriends(const Graph& graph,const std::string& first,const std::string& second)  {
-    std::vector<std::string> result;
     const auto& firstFriends = graph.getFriends(first);
     const auto& secondFriends = graph.getFriends(second);
     const auto* smaller = &firstFriends;
