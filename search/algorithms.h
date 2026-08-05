@@ -2,35 +2,41 @@
 #include "Graph.h"
 #include <string>
 #include <vector>
+#include <cstddef>
 
 namespace algo {
 
 
-std::vector<std::vector<std::string>> findConnectedComponents(const Graph& g);
+std::vector<std::vector<std::string>> findConnectedComponents(const Graph& graph);
 
-
-std::vector<std::vector<std::string>> findConnectedComponents(const Graph& g);
 
 struct NetworkStats {
-    size_t totalUsers;
-    size_t totalEdges;
-    double avgFriends;
-    size_t largestComponentSize;
+    size_t totalUsers=0;
+    size_t totalEdges=0;
+    double avgFriends=0;
+    size_t largestComponentSize=0;
+    std::vector<std::string> largestComponent;
     std::string mostConnectedId;
-    int mostConnectedCount;
+    int mostConnectedCount=0;
 };
-NetworkStats networkStatistics(const Graph& g);
+NetworkStats networkStatistics(const Graph& graph);
 
 struct DegreeEntry {
     std::string id;
-    int friendCount;
+    int friendCount=0;
 };
-std::vector<DegreeEntry> findMostConnectedUsers(const Graph& g);
+std::vector<DegreeEntry> degreeRanking(const Graph& graph);
+std::vector<DegreeEntry> findMostConnectedUsers(const Graph& graph);
 
-std::vector<std::vector<std::string>> findConnectedComponents(const Graph& g);
+std::vector<std::string> mutualFriends(const Graph& graph,
+                                       const std::string& first,
+                                       const std::string& second);
 
-std::vector<std::string> mutualFriends(const Graph& g, const std::string& a, const std::string& b);
-
-std::vector<std::string> findKeyUsers(const Graph& g);
+struct CentralityEntry {
+    std::string id;
+    double score = 0.0;
+};
+std::vector<CentralityEntry> betweennessCentrality(const Graph& graph);
+std::vector<std::string> findKeyUsers(const Graph& graph);
 
 }
