@@ -4,15 +4,15 @@
 
 ## نمادهای مورد استفاده
 
-- `V`: تعداد کاربران یا رأس‌های گراف 
-- `E`: تعداد روابط دوستی یا یال‌های گراف 
-- `deg(u)`: تعداد دوستان کاربر u 
-- `Δ`: بیشترین درجه یک رأس در گراف 
-- `R`: تعداد نامزدهای پیشنهاد دوستی 
-- `M`: تعداد دوستان مشترک دو کاربر 
-- `S`: مجموع درجه دوستان مستقیم کاربر در الگوریتم پیشنهاد دوست 
-- `K`: تعداد کاربران اولیه انتخاب‌شده برای انتشار خبر 
-- `C(V,K)`: تعداد حالت‌های انتخاب K کاربر از میان V کاربر
+- V : تعداد کاربران یا رأس‌های گراف 
+- E : تعداد روابط دوستی یا یال‌های گراف 
+- deg(u) : تعداد دوستان کاربر u 
+- Δ : بیشترین درجه یک رأس در گراف 
+- R : تعداد نامزدهای پیشنهاد دوستی 
+- M : تعداد دوستان مشترک دو کاربر 
+- S : مجموع درجه دوستان مستقیم کاربر در الگوریتم پیشنهاد دوست 
+- K : تعداد کاربران اولیه انتخاب‌شده برای انتشار خبر 
+- C(V,K) : تعداد حالت‌های انتخاب K کاربر از میان V کاربر
 
 
 ---
@@ -54,8 +54,8 @@ std::unordered_map<
 
 ساختمان داده‌های استفاده‌شده:
 
-- `unordered_map`
-- `unordered_set`
+- unordered_map
+- unordered_set
 
 پیچیدگی زمانی : O(1)
 
@@ -82,7 +82,7 @@ std::unordered_map<
 
 ساختمان داده استفاده‌شده:
 
-- `unordered_map`
+- unordered_map
 
 پیچیدگی زمانی : O(1)
 
@@ -94,8 +94,8 @@ std::unordered_map<
 
 ساختمان داده‌های استفاده‌شده:
 
-- `unordered_map`
-- `unordered_set`
+- unordered_map
+- unordered_set
 
 پیچیدگی زمانی : O(1)
 
@@ -107,7 +107,7 @@ std::unordered_map<
 
 ساختمان داده استفاده‌شده:
 
-- `unordered_set`
+- unordered_set
 
 پیچیدگی زمانی : O(1)
 
@@ -121,8 +121,8 @@ std::unordered_map<
 
 ساختمان داده‌های استفاده‌شده:
 
-- `unordered_set` برای نگهداری دوستان
-- `vector<string>` برای ساخت خروجی
+- unordered_set برای نگهداری دوستان
+- vector<string> برای ساخت خروجی
 - الگوریتم sort برای مرتب‌سازی
 
 اگر تعداد دوستان کاربر deg(u) باشد، کپی‌کردن شناسه‌ها O(deg(u)) و مرتب‌سازی آن‌ها O(deg(u) log deg(u)) زمان می‌برد.
@@ -139,9 +139,9 @@ std::unordered_map<
 
 ساختمان داده‌های استفاده‌شده:
 
-- `queue<string>` برای صف BFS
-- `unordered_map<string, int>` برای فاصله و وضعیت بازدید
-- `unordered_map<string, string>` برای والد رأس‌ها
+- queue<string> برای صف BFS
+- unordered_map<string, int> برای فاصله و وضعیت بازدید
+- unordered_map<string, string> برای والد رأس‌ها
 
 هر رأس حداکثر یک بار وارد صف می‌شود و هر رابطه دوستی نیز در طول پیمایش بررسی می‌شود.
 
@@ -159,10 +159,10 @@ std::unordered_map<
 
 ساختمان داده‌های استفاده‌شده:
 
-- `queue<string>` برای BFS
-- `unordered_map<string, int>` برای فاصله
-- `unordered_map<string, string>` برای والد رأس‌ها
-- `vector<string>` برای مسیر نهایی
+- queue<string> برای BFS
+- unordered_map<string, int> برای فاصله
+- unordered_map<string, string> برای والد رأس‌ها
+- vector<string> برای مسیر نهایی
 
 اجرای BFS دارای پیچیدگی زمانی O(V + E) است. بازسازی مسیر نیز در بدترین حالت O(V) زمان می‌برد؛ بنابراین پیچیدگی زمانی کل : O(V + E)
 
@@ -180,9 +180,9 @@ std::unordered_map<
 
 ساختمان داده‌های استفاده‌شده:
 
-- `queue<string>` برای BFS
-- `unordered_map<string, int>` برای فاصله‌ها
-- `vector<DistanceEntry>` برای خروجی
+- queue<string> برای BFS
+- unordered_map<string, int> برای فاصله‌ها
+- vector<DistanceEntry> برای خروجی
 - الگوریتم sort
 
 اجرای BFS O(V + E) زمان می‌برد.
@@ -219,9 +219,9 @@ std::unordered_map<
 
 ساختمان داده‌های استفاده‌شده:
 
-- `vector<string>` برای شناسه کاربران و کاربران انتخاب‌شده
-- `queue<string>` برای BFS چندمنبعی
-- `unordered_map<string, int>` برای فاصله
+- vector<string> برای شناسه کاربران و کاربران انتخاب‌شده
+- queue<string> برای BFS چندمنبعی
+- unordered_map<string, int> برای فاصله
 - Recursion برای تولید ترکیب‌ها
 
 با در نظر گرفتن تولید ترکیب‌ها، BFS و مقایسه مجموعه‌های انتخابی، پیچیدگی زمانی به شکل زیر است:
@@ -262,10 +262,10 @@ O(V log V + K × V × (V + E + K log K))
 
 ساختمان داده‌های استفاده‌شده:
 
-- `queue<string>` برای BFS
-- `unordered_set<string>` برای کاربران بازدیدشده
-- `vector<string>` برای شناسه‌ها و همسایه‌ها
-- `vector<vector<string>>` برای مؤلفه‌ها
+- queue<string> برای BFS
+- unordered_set<string> برای کاربران بازدیدشده
+- vector<string> برای شناسه‌ها و همسایه‌ها
+- vector<vector<string>> برای مؤلفه‌ها
 - الگوریتم sort
 
 هزینه استاندارد پیدا کردن مؤلفه‌ها بدون مرتب‌سازی O(V + E) است.
@@ -299,8 +299,8 @@ O(V log V + E log Δ)
 ساختمان داده‌های استفاده‌شده:
 
 - فهرست مجاورت
-- `vector<vector<string>>` برای مؤلفه‌ها
-- `vector<DegreeEntry>` برای درجه کاربران
+- vector<vector<string>> برای مؤلفه‌ها
+- vector<DegreeEntry> برای درجه کاربران
 - الگوریتم BFS
 - الگوریتم sort
 
@@ -324,7 +324,7 @@ O(V log V + E log Δ)
 ساختمان داده‌های استفاده‌شده:
 
 - فهرست مجاورت
-- `vector<DegreeEntry>`
+- vector<DegreeEntry>
 - الگوریتم sort
 - الگوریتم remove_if
 
@@ -343,7 +343,7 @@ O(V log V + E log Δ)
 ساختمان داده‌های استفاده‌شده:
 
 - دو unordered_set<string>
-- `vector<string>`
+- vector<string>
 - الگوریتم sort
 
 اگر تعداد دوستان مشترک M باشد، پیچیدگی زمانی :
@@ -373,12 +373,12 @@ O(min(deg(a), deg(b)) + M log M)
 
 ساختمان داده‌های استفاده‌شده:
 
-- `queue<string>` برای BFS
-- `stack<string>` برای پردازش معکوس
-- `unordered_map<string, int>` برای فاصله
-- `unordered_map<string, double>` برای تعداد مسیرها و وابستگی‌ها
-- `unordered_map<string, vector<string>>` برای پیشینیان
-- `vector<CentralityEntry>` برای نتیجه
+- queue<string> برای BFS
+- stack<string> برای پردازش معکوس
+- unordered_map<string, int> برای فاصله
+- unordered_map<string, double> برای تعداد مسیرها و وابستگی‌ها
+- unordered_map<string, vector<string>> برای پیشینیان
+- vector<CentralityEntry> برای نتیجه
 
 پیچیدگی استاندارد Brandes در گراف بدون وزن:
 
@@ -406,9 +406,9 @@ O(V(V + E log Δ))
 
 ساختمان داده‌های استفاده‌شده:
 
-- `unordered_set<string>` برای دوستان فعلی
-- `unordered_map<string, int>` برای امتیاز نامزدها
-- `vector<FriendSuggestion>` برای خروجی
+- unordered_set<string> برای دوستان فعلی
+- unordered_map<string, int> برای امتیاز نامزدها
+- vector<FriendSuggestion> برای خروجی
 - الگوریتم sort
 
 اگر S مجموع درجه دوستان مستقیم کاربر و R تعداد نامزدهای نهایی باشد، پیچیدگی زمانی :
@@ -438,13 +438,13 @@ O(S + R log R)
 
 ساختمان داده‌های استفاده‌شده:
 
-- `map<string, set<string>>` برای گراف کاری
-- `map<pair<string, string>, double>` برای مرکزیت یال‌ها
-- `queue<string>` برای BFS
-- `stack<string>` برای پردازش معکوس
-- `map<string, vector<string>>` برای پیشینیان
-- `vector<vector<string>>` برای جامعه‌ها
-- `set<string>` برای اعضای هر جامعه
+- map<string, set<string>> برای گراف کاری
+- map<pair<string, string>, double> برای مرکزیت یال‌ها
+- queue<string> برای BFS
+- stack<string> برای پردازش معکوس
+- map<string, vector<string>> برای پیشینیان
+- vector<vector<string>> برای جامعه‌ها
+- set<string> برای اعضای هر جامعه
 
 در بدترین حالت، یک یال در هر مرحله حذف می‌شود و مرکزیت یال‌ها دوباره محاسبه می‌شود.
 
