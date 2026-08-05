@@ -1,84 +1,161 @@
-#include "influenceMaximization.h"
-#include "algorithms.h"   // findConnectedComponents
+#include "InfluenceMaximization.h"
+
+#include <cstdint>
 #include <queue>
+#include <string>
 #include <unordered_map>
+#include <vector>
 #include <algorithm>
 #include <limits>
 
 namespace algo {
+namespace {
 
-// BFS چندمنبعی: فاصله‌ی هر راس تا نزدیک‌ترین seed
-static std::unordered_map<std::string, int> multiSourceBFS(
-    const Graph& g, const std::vector<std::string>& seeds) {
-    std::unordered_map<std::string, int> dist;
-    std::queue<std::string> q;
-    for (const auto& s : seeds) { dist[s] = 0; q.push(s); }
-    while (!q.empty()) {
-        std::string u = q.front(); q.pop();
-        for (const std::string& v : g.getFriends(u)) {
-            if (!dist.count(v)) {
-                dist[v] = dist[u] + 1;
-                q.push(v);
+constexpr std::uint64_t MAX_EXACT_COMBINATIONS = 2000000ULL;
+
+struct Evaluation {
+    size_t reached = 0;
+    int days = 0;
+    long long distanceSum = 0;
+};
+
+Evaluation evaluate(const Graph& graph, const std::vector<std::string>& seeds) {
+    Evaluation result;
+    if (seeds.empty()) return result;
+
+    std::unordered_map<std::string, int> distance;
+    std::queue<std::string> queue;
+    for (const std::string& seed : seeds) {
+        if (!graph.findUser(seed) || distance.count(seed)) continue;
+        distance[seed] = 0;
+        queue.push(seed);
+    }
+    while (!queue.empty()) {
+        const std::string current = queue.front();
+        queue.pop();
+        for (const std::string& neighbour : graph.getFriends(current)) {
+            if (!distance.count(neighbour)) {
+                distance[neighbour] = distance[current] + 1;
+                queue.push(neighbour);
             }
         }
     }
-    return dist;
-}
 
-// مرکز یک مؤلفه: راسی با کمترین "بیشینه فاصله تا بقیه‌ی اعضا"
-// (یعنی خبر با شروع از این راس، در کمترین زمان به کل مؤلفه می‌رسد)
-static std::string findComponentCenter(const Graph& g, const std::vector<std::string>& component) {
-    std::string best;
-    int bestEcc = std::numeric_limits<int>::max();
-    for (const std::string& candidate : component) {
-        auto dist = multiSourceBFS(g, {candidate});
-        int ecc = 0;
-        for (const std::string& other : component)
-            ecc = std::max(ecc, dist.count(other) ? dist[other] : 0);
-        if (ecc < bestEcc) { bestEcc = ecc; best = candidate; }
+    result.reached = distance.size();
+    for (const auto& [id, value] : distance) {
+        result.days = std::max(result.days, value);
+        result.distanceSum += value;
     }
-    return best;
+    return result;
 }
 
-std::vector<std::string> optimizeNewsSpread(const Graph& g, int k) {
-    std::vector<std::string> seeds;
-    if (k <= 0) return seeds;
+bool better(const Evaluation& candidateEvaluation,
+            const std::vector<std::string>& candidateSeeds,
+            const Evaluation& currentEvaluation,
+            const std::vector<std::string>& currentSeeds) {
+    if (candidateEvaluation.reached != currentEvaluation.reached) {
+        return candidateEvaluation.reached > currentEvaluation.reached;
+    }
+    if (candidateEvaluation.days != currentEvaluation.days) {
+        return candidateEvaluation.days < currentEvaluation.days;
+    }
+    if (candidateEvaluation.distanceSum != currentEvaluation.distanceSum) {
+        return candidateEvaluation.distanceSum < currentEvaluation.distanceSum;
+    }
+    return currentSeeds.empty() || candidateSeeds < currentSeeds;
+}
 
-    // چون خبر هرگز از یک مؤلفه‌ی همبند به مؤلفه‌ی دیگر منتقل نمی‌شود،
-    // پوشش نهایی فقط به تعداد و اندازه‌ی مؤلفه‌های انتخاب‌شده بستگی دارد
-    std::vector<std::vector<std::string>> components = findConnectedComponents(g);
-    std::sort(components.begin(), components.end(),
-              [](const auto& a, const auto& b) { return a.size() > b.size(); });
-
-    // برای بیشینه‌کردن مجموع افراد پوشش‌داده‌شده، انتخاب top-K بزرگ‌ترین مؤلفه‌ها
-    // بهینه است (هر seed حداکثر یک مؤلفه را می‌پوشاند - اثبات با تبادل/exchange argument)
-    int numSeedComponents = std::min((int)components.size(), k);
-    for (int i = 0; i < numSeedComponents; ++i)
-        seeds.push_back(findComponentCenter(g, components[i]));
-
-    int remaining = k - numSeedComponents;
-    if (remaining <= 0) { std::sort(seeds.begin(), seeds.end()); return seeds; }
-
-    // اگر K بیشتر از تعداد مؤلفه‌ها باشد، seedهای اضافی را با الگوریتم حریصانه‌ی
-    // "دورترین نقطه" (2-تقریب استاندارد برای مسئله‌ی k-center) اضافه می‌کنیم
-    // تا زمان رسیدن خبر به دورترین کاربران کاهش یابد
-    std::unordered_set<std::string> seedSet(seeds.begin(), seeds.end());
-    for (int i = 0; i < remaining; ++i) {
-        auto dist = multiSourceBFS(g, seeds);
-        std::string farthest;
-        int farthestDist = -1;
-        for (const auto& [id, user] : g.getAllUsers()) {
-            if (seedSet.count(id)) continue; // یک کاربر نباید دوبار seed شود
-            int d = dist.count(id) ? dist[id] : 0;
-            if (d > farthestDist) { farthestDist = d; farthest = id; }
+std::uint64_t combinationCount(size_t n, size_t k) {
+    if (k > n) return 0;
+    k = std::min(k, n - k);
+    std::uint64_t result = 1;
+    for (size_t i = 1; i <= k; ++i) {
+        const std::uint64_t numerator = static_cast<std::uint64_t>(n - k + i);
+        if (result > MAX_EXACT_COMBINATIONS * static_cast<std::uint64_t>(i) / numerator) {
+            return MAX_EXACT_COMBINATIONS + 1;
         }
-        if (farthest.empty()) break; // دیگر کاربر جدیدی برای انتخاب باقی نمانده
-        seeds.push_back(farthest);
-        seedSet.insert(farthest);
+        result = (result * numerator) / static_cast<std::uint64_t>(i);
+        if (result > MAX_EXACT_COMBINATIONS) return result;
     }
-
-    std::sort(seeds.begin(), seeds.end());
-    return seeds;
+    return result;
 }
 
+void enumerateCombinations(const Graph& graph,
+                           const std::vector<std::string>& ids,
+                           size_t targetSize,
+                           size_t start,
+                           std::vector<std::string>& current,
+                           std::vector<std::string>& bestSeeds,
+                           Evaluation& bestEvaluation) {
+    if (current.size() == targetSize) {
+        const Evaluation candidate = evaluate(graph, current);
+        if (better(candidate, current, bestEvaluation, bestSeeds)) {
+            bestEvaluation = candidate;
+            bestSeeds = current;
+        }
+        return;
+    }
+    const size_t remaining = targetSize - current.size();
+    for (size_t i = start; i + remaining <= ids.size(); ++i) {
+        current.push_back(ids[i]);
+        enumerateCombinations(graph, ids, targetSize, i + 1, current, bestSeeds, bestEvaluation);
+        current.pop_back();
+    }
 }
+
+InfluenceResult greedySelection(const Graph& graph,
+                                const std::vector<std::string>& ids,
+                                size_t k) {
+    std::vector<std::string> seeds;
+    Evaluation seedEvaluation;
+    while (seeds.size() < k) {
+        std::vector<std::string> bestCandidateSeeds;
+        Evaluation bestCandidateEvaluation;
+        bool found = false;
+        for (const std::string& candidate : ids) {
+            if (std::binary_search(seeds.begin(), seeds.end(), candidate)) continue;
+            std::vector<std::string> candidateSeeds = seeds;
+            candidateSeeds.push_back(candidate);
+            std::sort(candidateSeeds.begin(), candidateSeeds.end());
+            const Evaluation candidateEvaluation = evaluate(graph, candidateSeeds);
+            if (!found || better(candidateEvaluation, candidateSeeds,
+                                 bestCandidateEvaluation, bestCandidateSeeds)) {
+                found = true;
+                bestCandidateSeeds = std::move(candidateSeeds);
+                bestCandidateEvaluation = candidateEvaluation;
+            }
+        }
+        if (!found) break;
+        seeds = std::move(bestCandidateSeeds);
+        seedEvaluation = bestCandidateEvaluation;
+    }
+    return {seeds, seedEvaluation.reached, seedEvaluation.days, false};
+}
+
+}  // namespace
+
+InfluenceResult optimizeNewsSpreadDetailed(const Graph& graph, int k) {
+    std::vector<std::string> ids;
+    ids.reserve(graph.userCount());
+    for (const auto& [id, user] : graph.getAllUsers()) ids.push_back(id);
+    std::sort(ids.begin(), ids.end());
+
+    if (k <= 0 || ids.empty()) return {};
+    const size_t targetSize = std::min(static_cast<size_t>(k), ids.size());
+    if (targetSize == ids.size()) return {ids, ids.size(), 0, true};
+
+    if (combinationCount(ids.size(), targetSize) <= MAX_EXACT_COMBINATIONS) {
+        std::vector<std::string> current;
+        std::vector<std::string> bestSeeds;
+        Evaluation bestEvaluation;
+        enumerateCombinations(graph, ids, targetSize, 0, current, bestSeeds, bestEvaluation);
+        return {bestSeeds, bestEvaluation.reached, bestEvaluation.days, true};
+    }
+    return greedySelection(graph, ids, targetSize);
+}
+
+std::vector<std::string> optimizeNewsSpread(const Graph& graph, int k) {
+    return optimizeNewsSpreadDetailed(graph, k).selectedUsers;
+}
+
+}  // namespace algo
