@@ -264,7 +264,7 @@ int main(int argc, char* argv[]) {
         root["total_edges"] = json::Value(stats.totalEdges);
         root["avg_friends"] = json::Value(stats.avgFriends);
         root["largest_comp_size"] = json::Value(stats.largestComponentSize);
-        root["largest_component"] = stringArray(stats.largest_component);
+        root["largest_component"] = stringArray(stats.largestComponent);
         root["most_connected_id"] = json::Value(stats.mostConnectedId);
         root["most_connected_count"] = json::Value(stats.mostConnectedCount);
         return printJson(root);
